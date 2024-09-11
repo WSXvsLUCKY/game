@@ -1,5 +1,6 @@
 import pygame
 import random
+import time
 
 # Инициализация Pygame
 pygame.init()
@@ -29,8 +30,7 @@ block_speed = 5
 blocks = []
 
 score = 0
-font = pygame.font.Font(None, 36)
-
+font = pygame.font.Font(None, 36)  # Размер шрифта для счёта
 
 # Функция для создания монстров
 def create_block():
@@ -38,6 +38,18 @@ def create_block():
     block_y = -block_height
     return [block_x, block_y]
 
+# Функция для отображения текста
+def display_text(text, duration=2, font_size=36):
+    font = pygame.font.Font(None, font_size)
+    text_surf = font.render(text, True, (255, 255, 255))
+    text_rect = text_surf.get_rect(center=(WIDTH//2, HEIGHT//2))
+    screen.blit(background_img, (0, 0))  # Устанавливаем фон
+    screen.blit(text_surf, text_rect)
+    pygame.display.update()
+    time.sleep(duration)
+
+# Показать имя разработчика
+display_text("Разработчик: Ифтихор Хайдаралиев", duration=3, font_size=36)
 
 # Основной цикл игры
 running = True
@@ -59,7 +71,7 @@ while running:
     if random.randint(1, 20) == 1:
         blocks.append(create_block())
 
-    for block in blocks:
+    for block in blocks[:]:
         block[1] += block_speed
         if block[1] > HEIGHT:
             blocks.remove(block)
@@ -67,26 +79,26 @@ while running:
 
     # Проверка на столкновения
     for block in blocks:
-        if (player_x < block[0] < player_x + player_size or player_x < block[
-            0] + block_width < player_x + player_size) and \
-                (player_y < block[1] < player_y + player_size or player_y < block[
-                    1] + block_height < player_y + player_size):
+        if (player_x < block[0] < player_x + player_size or player_x < block[0] + block_width < player_x + player_size) and \
+           (player_y < block[1] < player_y + player_size or player_y < block[1] + block_height < player_y + player_size):
             running = False
+            break
 
-    # экран
+    # Экран
     screen.blit(background_img, (0, 0))  # Устанавливаем фон
 
-    # ракеты
+    # Ракеты
     screen.blit(rocket_img, (player_x, player_y))
 
-    # монстр
+    # Монстр
     for block in blocks:
         screen.blit(monster_img, (block[0], block[1]))
 
-    # счета
+    # Счёт
     score_text = font.render(f"Score: {score}", True, (255, 255, 255))
     screen.blit(score_text, (10, 10))
 
     pygame.display.update()
 
 pygame.quit()
+
